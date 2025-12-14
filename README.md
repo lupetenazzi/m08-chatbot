@@ -1,11 +1,18 @@
 # ChatBot Auditoria do Toby - M08
 
-Chatbot investigativo para a Dunder Mifflin que responde sobre:  
-- Política de compliance (RAG sobre o manual)  
-- Conspiração contra Toby (e-mails internos)  
-- Quebras de compliance financeiras (transações diretas e fraudes com contexto de e-mail)  
+## Video Demonstração
+<div align="center">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/4vCLRgi4TYg?si=RsjigTBStzKmOmAs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+Chatbot investigativo para a Dunder Mifflin que responde sobre:
+
+- Política de compliance (RAG sobre o manual)
+- Conspiração contra Toby (e-mails internos)
+- Quebras de compliance financeiras (transações diretas e fraudes com contexto de e-mail)
 
 ## Estrutura de pastas (resumo)
+
 ```
 ├── data/
 │   ├── politica_compliance.txt
@@ -26,6 +33,7 @@ Chatbot investigativo para a Dunder Mifflin que responde sobre:
 ```
 
 ## Como rodar:
+
 1. Criar e ativar o venv:
    ```bash
    python -m venv venv
@@ -54,7 +62,6 @@ Chatbot investigativo para a Dunder Mifflin que responde sobre:
 ## Arquitetura
 
 Colocar arquitetura aqui
-
 
 ## Integrantes da equipe
 
