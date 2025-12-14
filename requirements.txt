@@ -1,11 +1,8 @@
-# --- Core do projeto ---
 python-dotenv>=1.0.0
 python-dateutil>=2.9.0
 
-# --- Web (src/webapp/app.py) ---
 Flask>=3.0.0
 
-# --- LangChain (Caminho B = 0.3.x) ---
 langchain==0.3.27
 langchain-core==0.3.76
 langchain-community==0.3.29
@@ -14,6 +11,5 @@ langchain-groq==0.3.8
 langchain-huggingface==0.1.2
 groq>=0.31.1,<1.0.0
 
-# --- RAG / Vetor / Embeddings ---
 faiss-cpu>=1.7.4
 sentence-transformers>=2.2.2
