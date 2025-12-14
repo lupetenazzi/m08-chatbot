@@ -11,7 +11,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 from agent_compliance import ComplianceChatbot
 from agent_conspiracy import ConspiracyChatbot
-from agent_fraud_detection import create_fraud_agent
+from agent_fraud_detection import criar_agente_fraude
 
 
 INTENT_PROMPT = """
@@ -38,7 +38,7 @@ class TobyOrchestrator:
     Roteia a pergunta do usuário para o agente correto:
     - policy: RAG sobre política de compliance (ComplianceChatbot)
     - conspiracy: investigação nos e-mails sobre Toby (ConspiracyChatbot)
-    - fraud: detecção de quebras diretas ou com contexto de e-mail (create_fraud_agent)
+    - fraud: detecção de quebras diretas ou com contexto de e-mail (criar_agente_fraude)
     """
 
     def __init__(self):
@@ -49,27 +49,9 @@ class TobyOrchestrator:
             temperature=0.0,
         )
 
-        self._policy_bot = None
-        self._conspiracy_bot = None
-        self._fraud_agent = None
-
-    @property
-    def policy_bot(self):
-        if self._policy_bot is None:
-            self._policy_bot = ComplianceChatbot()
-        return self._policy_bot
-
-    @property
-    def conspiracy_bot(self):
-        if self._conspiracy_bot is None:
-            self._conspiracy_bot = ConspiracyChatbot(api_key=GROQ_API_KEY)
-        return self._conspiracy_bot
-
-    @property
-    def fraud_agent(self):
-        if self._fraud_agent is None:
-            self._fraud_agent = create_fraud_agent()
-        return self._fraud_agent
+        self._policy_bot = ComplianceChatbot()
+        self._conspiracy_bot = ConspiracyChatbot(api_key=GROQ_API_KEY)
+        self._fraud_agent = criar_agente_fraude()
 
     def classify_intent(self, message: str) -> str:
         low = message.lower()
@@ -92,27 +74,26 @@ class TobyOrchestrator:
         intent = self.classify_intent(message)
 
         if intent == "policy":
-            result = self.policy_bot.ask(message)
+            result = self._policy_bot.ask(message)
             return result.get("result", "Não encontrei resposta na política.")
 
         if intent == "conspiracy":
-            return self.conspiracy_bot.ask(message)
+            return self._conspiracy_bot.ask(message)
 
         if intent == "fraud_simple":
-            return self.fraud_agent("quebras simples")
+            return self._fraud_agent("quebras simples")
 
         if intent == "fraud_complex":
-            return self.fraud_agent("quebras complexas")
+            return self._fraud_agent("quebras complexas")
 
         if intent == "fraud_all":
-            return self.fraud_agent("mostrar tudo")
+            return self._fraud_agent("mostrar tudo")
 
         return (
             "Sou o orquestrador. Peça: política de compliance, conspiração contra Toby, "
             "quebras simples (fraude direta), quebras complexas (com e-mail) ou relatório completo."
         )
 
-    # Alias para interfaces que chamam .ask()
     def ask(self, message: str) -> str:
         return self.handle(message)
 

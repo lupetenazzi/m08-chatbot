@@ -40,9 +40,9 @@ class FraudDetectionAgent:
         self.emails_path = Path(emails_path)
         self.policy_path = Path(policy_path)
 
-        self.policy_text = self._read_policy()
-        self.transactions = self._load_transactions()
-        self.emails = self._load_emails()
+        self.policy_text = self._ler_politica()
+        self.transactions = self._carregar_transacoes()
+        self.emails = self._carregar_emails()
 
         self.blacklist_keywords = {
             "Entretenimento inadequado (itens proibidos)": [
@@ -104,12 +104,12 @@ class FraudDetectionAgent:
             },
         ]
 
-    def _read_policy(self) -> str:
+    def _ler_politica(self) -> str:
         if not self.policy_path.exists():
             return ""
         return self.policy_path.read_text(encoding="utf-8")
 
-    def _load_transactions(self) -> List[Dict]:
+    def _carregar_transacoes(self) -> List[Dict]:
         if not self.transactions_path.exists():
             return []
 
@@ -121,7 +121,7 @@ class FraudDetectionAgent:
                 data.append(row)
             return data
 
-    def _load_emails(self) -> List[Dict]:
+    def _carregar_emails(self) -> List[Dict]:
         if not self.emails_path.exists():
             return []
 
@@ -153,7 +153,7 @@ class FraudDetectionAgent:
             )
         return emails
 
-    def detect_direct_violations(self) -> List[Dict]:
+    def detectar_quebras_diretas(self) -> List[Dict]:
         findings: List[Dict] = []
 
         for tx in self.transactions:
@@ -191,10 +191,10 @@ class FraudDetectionAgent:
                     }
                 )
 
-        findings.extend(self._detect_smurfing())
+        findings.extend(self._detectar_fracionamento())
         return findings
 
-    def _detect_smurfing(self) -> List[Dict]:
+    def _detectar_fracionamento(self) -> List[Dict]:
         grouped: Dict[tuple, List[Dict]] = {}
         for tx in self.transactions:
             key = (tx.get("funcionario"), tx.get("data"))
@@ -220,13 +220,13 @@ class FraudDetectionAgent:
                 )
         return alerts
 
-    def detect_contextual_fraud(self) -> List[Dict]:
+    def detectar_quebras_contexto(self) -> List[Dict]:
         flags: List[Dict] = []
         for email in self.emails:
             content = email.get("raw_lower", "")
             for rule in self.context_rules:
                 if all(keyword in content for keyword in rule["email_keywords"]):
-                    matches = self._match_transactions(rule["tx_keywords"])
+                    matches = self._filtrar_transacoes_por_palavras(rule["tx_keywords"])
                     for tx in matches:
                         flags.append(
                             {
@@ -244,7 +244,7 @@ class FraudDetectionAgent:
                         )
         return flags
 
-    def _match_transactions(self, keywords: List[str]) -> List[Dict]:
+    def _filtrar_transacoes_por_palavras(self, keywords: List[str]) -> List[Dict]:
         result = []
         for tx in self.transactions:
             desc_lower = tx.get("descricao", "").lower()
@@ -252,19 +252,19 @@ class FraudDetectionAgent:
                 result.append(tx)
         return result
 
-    def run_full_audit(self) -> Dict:
+    def executar_auditoria(self) -> Dict:
         return {
             "policy_path": str(self.policy_path),
-            "direct_violations": self.detect_direct_violations(),
-            "contextual_flags": self.detect_contextual_fraud(),
+            "direct_violations": self.detectar_quebras_diretas(),
+            "contextual_flags": self.detectar_quebras_contexto(),
         }
 
-    def pretty_print(self, report: Dict) -> None:
-        print(self._format_direct(report["direct_violations"]))
+    def imprimir_relatorio(self, report: Dict) -> None:
+        print(self._formatar_quebras_diretas(report["direct_violations"]))
         print()
-        print(self._format_complex(report["contextual_flags"]))
+        print(self._formatar_quebras_contexto(report["contextual_flags"]))
 
-    def _format_direct(self, direct: List[Dict]) -> str:
+    def _formatar_quebras_diretas(self, direct: List[Dict]) -> str:
         if not direct:
             return "Nenhuma quebra direta encontrada nas transações."
         total_rules = sum(len(item["motivos"]) for item in direct)
@@ -283,7 +283,7 @@ class FraudDetectionAgent:
             lines.append("")
         return "\n".join(lines)
 
-    def _format_complex(self, ctx: List[Dict]) -> str:
+    def _formatar_quebras_contexto(self, ctx: List[Dict]) -> str:
         if not ctx:
             return "Nenhuma quebra com contexto de e-mail detectada."
         lines = [
@@ -336,7 +336,7 @@ class FraudChatRouter:
             temperature=0.0,
         )
 
-    def classify(self, message: str) -> str:
+    def classificar(self, message: str) -> str:
         low = message.lower()
         if "quebra" in low or "fraude" in low or "compliance" in low:
             if "simples" in low or "diret" in low:
@@ -352,8 +352,8 @@ class FraudChatRouter:
         except Exception:
             return "unknown"
 
-    def ask(self, message: str) -> str:
-        intent = self.classify(message)
+    def responder(self, message: str) -> str:
+        intent = self.classificar(message)
 
         if intent == "greeting":
             return (
@@ -368,17 +368,17 @@ class FraudChatRouter:
                 "ou 'mostrar tudo' para o relatório completo."
             )
         if intent == "simple":
-            return self.detector._format_direct(self.detector.detect_direct_violations())
+            return self.detector._formatar_quebras_diretas(self.detector.detectar_quebras_diretas())
         if intent == "complex":
-            return self.detector._format_complex(self.detector.detect_contextual_fraud())
+            return self.detector._formatar_quebras_contexto(self.detector.detectar_quebras_contexto())
         if intent == "all":
-            direct = self.detector.detect_direct_violations()
-            ctx = self.detector.detect_contextual_fraud()
-            return self.detector._format_direct(direct) + "\n\n" + self.detector._format_complex(ctx)
+            direct = self.detector.detectar_quebras_diretas()
+            ctx = self.detector.detectar_quebras_contexto()
+            return self.detector._formatar_quebras_diretas(direct) + "\n\n" + self.detector._formatar_quebras_contexto(ctx)
 
         return "Não entendi. Peça por 'quebras simples', 'quebras complexas' ou 'mostrar tudo'."
 
-    def chat(self) -> None:
+    def modo_interativo(self) -> None:
         print("AGENTE DE FRAUDES: Quebra de compliance")
         print("Diga oi/ajuda ou pergunte por 'quebras simples' ou 'quebras complexas'.")
         while True:
@@ -388,16 +388,16 @@ class FraudChatRouter:
             if user.lower() in {"sair", "exit", "quit"}:
                 print("Encerrando.")
                 break
-            print(self.ask(user))
+            print(self.responder(user))
 
 
-def create_fraud_agent():
+def criar_agente_fraude():
     detector = FraudDetectionAgent()
     router = FraudChatRouter(detector)
-    return router.ask
+    return router.responder
 
 
 if __name__ == "__main__":
     detector = FraudDetectionAgent()
     router = FraudChatRouter(detector)
-    router.chat()
+    router.modo_interativo()
