@@ -2,7 +2,9 @@
 
 ## Video Demonstração
 <div align="center">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/4vCLRgi4TYg?si=RsjigTBStzKmOmAs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  <a href="https://www.youtube.com/watch?v=4vCLRgi4TYg" target="_blank">
+    <img src="https://img.youtube.com/vi/4vCLRgi4TYg/0.jpg" alt="Demonstração - Auditoria do Toby" width="560">
+  </a>
 </div>
 
 Chatbot investigativo para a Dunder Mifflin que responde sobre:
