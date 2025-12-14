@@ -112,6 +112,10 @@ class TobyOrchestrator:
             "quebras simples (fraude direta), quebras complexas (com e-mail) ou relatório completo."
         )
 
+    # Alias para interfaces que chamam .ask()
+    def ask(self, message: str) -> str:
+        return self.handle(message)
+
 
 def main():
     bot = TobyOrchestrator()
