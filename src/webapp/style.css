@@ -1,0 +1,138 @@
+/* ======== ESTILO GERAL ======== */
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #1c1c1c;
+  color: #e5e5e5;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+/* ======== TÍTULO SUPERIOR ======== */
+
+#title-bar {
+  text-align: center;
+  padding: 20px 10px;
+  background: #262626;
+  border-bottom: 1px solid #333;
+}
+
+#title-bar h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #b0b0b0;
+  font-size: 13px;
+}
+
+/* ======== ÁREA DO CHAT ======== */
+
+#chat-container {
+  padding: 20px 0 100px; /* espaço inferior para o composer fixo */
+}
+
+#messages {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ======== MENSAGENS AJUSTADAS ======== */
+
+.message {
+  padding: 4px 12px;
+  border-radius: 10px;
+  white-space: pre-wrap;
+  max-width: 70%;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.message.user {
+  background: #3a3a3a;
+  align-self: flex-end;
+}
+
+.message.bot {
+  background: #2a2a2a;
+  align-self: flex-start;
+}
+
+.message p {
+  margin: 4px 0;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.message h3 {
+  margin: 6px 0 3px;
+  font-size: 16px;
+}
+
+.message ul {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
+.message li {
+  margin-bottom: 2px;
+}
+
+
+#composer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background: #2e2e2e;
+  padding: 12px;
+
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+
+  border-top: 1px solid #444;
+}
+
+/* Input ocupa 50% da tela e é centralizado */
+#input {
+  width: 50%;
+  padding: 12px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+
+  background: #3a3a3a;
+  color: #fff;
+  font-size: 15px;
+}
+
+#input::placeholder {
+  color: #8f8f8f;
+}
+
+#send {
+  padding: 10px 14px;
+  background: #4a8ef0;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#send:hover {
+  background: #70a8f5;
+}
