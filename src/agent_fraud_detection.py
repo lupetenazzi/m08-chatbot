@@ -307,8 +307,8 @@ Você é um roteador de intenções para um chatbot de auditoria financeira.
 Classifique a mensagem do usuário em UMA das opções:
 - greeting -> saudações ou conversa neutra.
 - help -> quando pedir ajuda ou como usar.
-- simple -> quando pedir quebras simples/diretas (basta a transação para apontar violação).
-- complex -> quando pedir quebras complexas/contextuais (precisa cruzar e-mail + transação).
+- simple -> quando pedir quebras simples/diretas (basta a transação para apontar violação). Inclui termos como "quebra de compliance simples", "fraude simples", "violação direta".
+- complex -> quando pedir quebras complexas/contextuais (precisa cruzar e-mail + transação). Inclui termos como "quebra de compliance complexa", "fraude com e-mail", "precisa olhar e-mails".
 - all -> quando pedir tudo/relatório completo.
 - unknown -> qualquer outra coisa.
 
@@ -337,6 +337,13 @@ class FraudChatRouter:
         )
 
     def classify(self, message: str) -> str:
+        low = message.lower()
+        if "quebra" in low or "fraude" in low or "compliance" in low:
+            if "simples" in low or "diret" in low:
+                return "simple"
+            if "complex" in low or "email" in low or "contexto" in low:
+                return "complex"
+
         prompt = INTENT_PROMPT.format(msg=message)
         raw = self.llm.invoke(prompt).content.strip()
         try:

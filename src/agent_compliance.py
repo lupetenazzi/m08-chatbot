@@ -3,22 +3,23 @@ from pathlib import Path
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import TextLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 
 class ComplianceChatbot:
-    
-    def __init__(self, policy_file: str = "data/politica_compliance.txt"):
-        
-        self.policy_file = policy_file
+
+    def __init__(self, policy_file: str | Path = None):
+
+        self.policy_file = Path(policy_file) if policy_file else BASE_DIR / "data" / "politica_compliance.txt"
         self.llm = None
         self.retriever = None
         self.qa_chain = None
@@ -29,10 +30,13 @@ class ComplianceChatbot:
         self.create_chain()
     
     def load_documents(self):
-        
-        loader = TextLoader(self.policy_file, encoding="utf-8")
+
+        if not self.policy_file.exists():
+            raise FileNotFoundError(f"Arquivo de política não encontrado: {self.policy_file}")
+
+        loader = TextLoader(str(self.policy_file), encoding="utf-8")
         documents = loader.load()
-        
+
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=100,
