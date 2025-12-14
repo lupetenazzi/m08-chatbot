@@ -8,8 +8,8 @@ from flask import Flask, request, jsonify, send_from_directory
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, BASE_DIR)
 
-# Importa ConspiracyChatbot
-from agent_conspiracy import ConspiracyChatbot
+# Importa Orquestrador
+from agent_orchestrator import TobyOrchestrator
 
 # Carrega .env na pasta src/
 load_dotenv(os.path.join(BASE_DIR, ".env"))
@@ -18,7 +18,7 @@ API_KEY = os.getenv("GROQ_API_KEY")
 if not API_KEY:
     raise RuntimeError("GROQ_API_KEY não definida no .env!")
 
-bot = ConspiracyChatbot(API_KEY)
+bot = TobyOrchestrator()
 
 # app aponta para o diretório atual (webapp/)
 WEBAPP_DIR = os.path.dirname(__file__)
