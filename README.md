@@ -63,7 +63,96 @@ Chatbot investigativo para a Dunder Mifflin que responde sobre:
 
 ## Arquitetura
 
-Colocar arquitetura aqui
+Abaixo, segue arquitetura geral do sistema com a descrição de seus principais componentes e funcionalidades.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                       USUÁRIO                           │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│            ORQUESTRADOR (agent_orchestrator.py)         │
+│                                                         │
+│  ┌────────────────────────────────────────────────┐     │
+│  │    Identifica qual agente deve responder       │     │
+│  │       conforme o contexto da mensagem          │     │
+│  └────────────────────────────────────────────────┘     │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+        ┌───────────────────┼───────────────────┐
+        ↓                   ↓                   ↓
+┌───────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│  AGENTE DE    │  │   AGENTE DE     │  │   AGENTE DE     │
+│  COMPLIANCE   │  │  CONSPIRAÇÃO    │  │    FRAUDES      │
+└───────────────┘  └─────────────────┘  └─────────────────┘
+        ↓                   ↓                   ↓
+┌───────────────┐  ┌─────────────────┐  ┌───────────────────────────┐
+│  Sistema RAG  │  │  Parser Emails  │  │ Verifica Irregularidades  │
+│     FAISS     │  │   + Analisador  │  │     e valida Dados        │
+└───────────────┘  └─────────────────┘  └───────────────────────────┘ 
+        ↓                   ↓                   ↓
+┌─────────────────────────────────────────────────────────┐
+│                    FONTES DE DADOS                      │
+│  • politica_compliance.txt                              │
+│  • emails_internos.txt                                  │
+│  • transacoes_bancarias.csv                             │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────┐
+│              MODELO DE LINGUAGEM (LLM)                  │
+│                        Groq API                         │
+└─────────────────────────────────────────────────────────┘
+
+```
+
+### Principais funcionalidades e componentes:
+
+**Orquestrador (agent_orchestrator.py)**
+
+Decide por meio do contexto da pergunta do usuário qual agentee específico deve processar a perguntar para retornar uma resposta coerente. É responsável por analisar a inteção da pergunta do usuário, encaminhar para o agente correto, coordenar as respostas e gerenciar esse contexto de conversa.
+
+
+**Agentes Especializados** 
+
+- Agente de Compliance (agent_compliance.py) especialista em responder dúvidas sobre a política de compliance da empresa. Utiliza das seguintes tecnologias:
+
+   RAG (Retrieval-Augmented Generation)
+
+   FAISS (banco de vetores)
+
+   HuggingFace Embeddings
+
+   LangChain RetrievalQA
+
+- Agente de Conspiração (agent_conspiracy.py) é um investigador que analisa emails internos procurando evidências de conspirações. Utiliza das seguintes tecnologias:
+
+   Parser de emails
+
+   Sistema de filtros inteligentes
+   
+   Análise contextual com LLM
+
+- Agente de Fraudes (agent_fraud_detection.py) é um auditor que detecta violações de compliance em transações financeiras. Utiliza das seguintes tecnologias:
+
+   Analisador CSV de transações
+
+   Sistema de regras de validação
+
+   Cruzamento de dados emails + transações
+
+   Detecção de padrões suspeitos
+
+
+**Modelo de Linguagem** 
+
+Via Groq API usado por todos os agentes para:
+
+Classificação de intenções
+Geração de respostas contextualizadas
+Análise de conteúdo textual
+Correlação de evidências
+
+
 
 ## Integrantes da equipe
 
