@@ -2,8 +2,8 @@
 
 ## Video Demonstração
 <div align="center">
-  <a href="https://www.youtube.com/watch?v=4vCLRgi4TYg" target="_blank">
-    <img src="https://img.youtube.com/vi/4vCLRgi4TYg/0.jpg" alt="Demonstração - Auditoria do Toby" width="560">
+  <a href="https://www.youtube.com/watch?v=aqDq7wuRj_k" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.youtube.com/vi/aqDq7wuRj_k/0.jpg" alt="Demonstração" width="560">
   </a>
 </div>
 
